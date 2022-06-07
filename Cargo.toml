@@ -1,0 +1,15 @@
+[package]
+name = "rocket-tracing-opentelemetry"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+http = "0.2"
+opentelemetry = { git = "https://github.com/fiadliel/opentelemetry-rust", features = [
+    "rt-tokio",
+    "rt-tokio-current-thread",
+] }
+opentelemetry-http = { git = "https://github.com/fiadliel/opentelemetry-rust" }
+rocket = "0.5.0-rc.2"
+tracing = { git = "https://github.com/fiadliel/tracing", branch = "gcoady" }
+tracing-opentelemetry = { git = "https://github.com/fiadliel/tracing", branch = "gcoady" }
