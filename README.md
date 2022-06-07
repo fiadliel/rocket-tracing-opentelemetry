@@ -1,5 +1,7 @@
 # rocket-tracing-opentelemetry
 
+Hooks up Rocket with OpenTelemetry context (via tracing). Includes ability to capture OT context from Rocket request headers.
+
 Use like this:
 
 ```rust
