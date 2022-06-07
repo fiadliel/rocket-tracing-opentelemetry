@@ -1,0 +1,17 @@
+[package]
+name = "example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocket = "0.5.0-rc.2"
+rocket-tracing-opentelemetry = { git = "https://github.com/fiadliel/rocket-tracing-opentelemetry" }
+tracing = { git = "https://github.com/fiadliel/tracing", branch = "gcoady" }
+tracing-subscriber = { git = "https://github.com/fiadliel/tracing", branch = "gcoady" }
+tracing-attributes = { git = "https://github.com/fiadliel/tracing", branch = "gcoady" }
+tracing-opentelemetry = { git = "https://github.com/fiadliel/tracing", branch = "gcoady" }
+opentelemetry-http = { git = "https://github.com/fiadliel/opentelemetry-rust" }
+opentelemetry = { git = "https://github.com/fiadliel/opentelemetry-rust", features = [
+    "rt-tokio",
+    "rt-tokio-current-thread",
+] }
