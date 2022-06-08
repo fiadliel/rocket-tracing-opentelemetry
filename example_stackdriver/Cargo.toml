@@ -1,0 +1,21 @@
+[package]
+name = "example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gcp_auth = "0.7"
+rocket = "0.5.0-rc.2"
+rocket-tracing-opentelemetry = { path = ".." }
+tracing = "0.1"
+tracing-opentelemetry = "0.17"
+tracing-subscriber = "0.3"
+opentelemetry-http = "0.6"
+opentelemetry-stackdriver = { version = "0.14", default-features = false, features = [
+    "gcp_auth",
+    "tls-native-roots",
+] }
+opentelemetry = { version = "0.17", features = [
+    "rt-tokio",
+    "rt-tokio-current-thread",
+] }

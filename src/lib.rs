@@ -58,12 +58,17 @@ fn add_header<'r>(
 
 pub struct TracingFairing {
     text_map_propagator: Box<dyn TextMapPropagator + Send + Sync>,
+    use_stackdriver_attributes: bool,
 }
 
 impl TracingFairing {
-    pub fn new(text_map_propagator: Box<dyn TextMapPropagator + Send + Sync>) -> TracingFairing {
+    pub fn new(
+        text_map_propagator: Box<dyn TextMapPropagator + Send + Sync>,
+        use_stackdriver_attributes: bool,
+    ) -> TracingFairing {
         TracingFairing {
             text_map_propagator,
+            use_stackdriver_attributes
         }
     }
 }
@@ -91,13 +96,21 @@ impl fairing::Fairing for TracingFairing {
 
         let context: Context = self.text_map_propagator.extract(&extractor);
 
-        let span: tracing::Span = info_span!("http_request",
-          otel.name = %format!("{} {}", request.method(), request.uri().path()),
-          "http.target" = %request.uri().to_string(),
-          "http.path" = %request.uri().path(),
-          "http.method" = %request.method(),
-          "http.status_code" = tracing::field::Empty
-        );
+        let span: tracing::Span = if self.use_stackdriver_attributes {
+            info_span!("http_request",
+                otel.name = %format!("{} {}", request.method(), request.uri().path()),
+                "/http/url" = %request.uri().to_string(),
+                "/http/path" = %request.uri().path(),
+                "/http/method" = %request.method(),
+                "/http/status_code" = tracing::field::Empty)
+        } else {
+            info_span!("http_request",
+                otel.name = %format!("{} {}", request.method(), request.uri().path()),
+                "http.target" = %request.uri().to_string(),
+                "http.path" = %request.uri().path(),
+                "http.method" = %request.method(),
+                "http.status_code" = tracing::field::Empty)
+        };
 
         span.set_parent(context);
         request.local_cache(|| Some(span));
@@ -105,7 +118,12 @@ impl fairing::Fairing for TracingFairing {
 
     async fn on_response<'r>(&self, request: &'r Request<'_>, response: &mut Response<'r>) {
         if let Some(span) = request.local_cache(|| None::<tracing::Span>) {
-            span.record("http.status_code", &response.status().code);
+            let status_code_field = if self.use_stackdriver_attributes {
+                "/http/status_code"
+            } else {
+                "http.status_code"
+            };
+            span.record(status_code_field, &response.status().code);
         }
     }
 }
