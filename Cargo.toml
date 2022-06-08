@@ -5,11 +5,8 @@ edition = "2021"
 
 [dependencies]
 http = "0.2"
-opentelemetry = { git = "https://github.com/fiadliel/opentelemetry-rust", features = [
-    "rt-tokio",
-    "rt-tokio-current-thread",
-] }
-opentelemetry-http = { git = "https://github.com/fiadliel/opentelemetry-rust" }
+opentelemetry = "0.17"
+opentelemetry-http = "0.6"
 rocket = "0.5.0-rc.2"
-tracing = { git = "https://github.com/fiadliel/tracing", branch = "gcoady" }
-tracing-opentelemetry = { git = "https://github.com/fiadliel/tracing", branch = "gcoady" }
+tracing = "0.1"
+tracing-opentelemetry = "0.17"

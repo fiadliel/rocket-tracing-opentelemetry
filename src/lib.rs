@@ -24,7 +24,7 @@ impl TraceContext<'_> {
 
     fn from_request<'r>(request: &'r Request<'_>) -> Option<TraceContext<'r>> {
         let span = request.local_cache(|| None::<tracing::Span>);
-        span.as_ref().map(|span| TraceContext::new(span))
+        span.as_ref().map(TraceContext::new)
     }
 
     pub fn span(&self) -> &tracing::Span {
@@ -92,8 +92,8 @@ impl fairing::Fairing for TracingFairing {
         let context: Context = self.text_map_propagator.extract(&extractor);
 
         let span: tracing::Span = info_span!("http_request",
-          otel.name=%format!("{} {}",
-            request.method(), request.uri().path()),
+          otel.name = %format!("{} {}", request.method(), request.uri().path()),
+          "http.target" = %request.uri().to_string(),
           "http.path" = %request.uri().path(),
           "http.method" = %request.method(),
           "http.status_code" = tracing::field::Empty
