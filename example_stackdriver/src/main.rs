@@ -5,7 +5,7 @@ use opentelemetry::{
     global, runtime::Tokio, sdk::propagation::TraceContextPropagator, trace::TracerProvider,
 };
 use rocket::fairing::AdHoc;
-use rocket_tracing_opentelemetry::*;
+use rocket_tracing_opentelemetry::{TraceContext, TracingFairing};
 use tracing_subscriber::{filter, prelude::*, Registry};
 
 #[get("/")]
@@ -50,7 +50,7 @@ async fn rocket() -> _ {
         .attach(tracing_fairing)
         .attach(AdHoc::on_shutdown("Shutdown OpenTelemetry", |_| {
             Box::pin(async move {
-                let _ = rocket::tokio::task::spawn_blocking(|| global::shutdown_tracer_provider());
+                let _ = rocket::tokio::task::spawn_blocking(global::shutdown_tracer_provider);
             })
         }))
 }
